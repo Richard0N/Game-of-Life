@@ -89,19 +89,11 @@ class Grid:
     # FIX: reset background when resettig field
     def reset_field(self, screen):
         """Reset reset_field"""
+        screen.fill((255, 255, 255))
         for row in self.cells:
             for cell in row:
                 cell.state = CellState.DEAD
-                pygame.draw.rect(
-                    screen,
-                    (255, 255, 255),
-                    pygame.Rect(
-                        cell.x * self.cell_size,
-                        cell.y * self.cell_size,
-                        self.cell_size,
-                        self.cell_size,
-                    ),
-                )
+                cell.time_not_changed = 0
 
     def initialize_manually(self):
         for row in self.cells:
@@ -283,6 +275,7 @@ def main():
                     topleft=green_button_offset
                 ).collidepoint(pos):
                     game.reset_field(screen)
+                    count = 0
 
         # Update and draw
         if started:
