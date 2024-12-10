@@ -76,7 +76,7 @@ class Grid:
         # Größe des RLE-Musters bestimmen
         pattern_width = len(rle_grid[0])
         pattern_height = len(rle_grid)
-        print(pattern_width, pattern_height)
+        #print(pattern_width, pattern_height)
 
         # Berechnung der Offsets für die Zentrierung
         offset_x = (self.width - pattern_width) // 2
@@ -162,9 +162,14 @@ class Grid:
         neighbors = []
         for dx, dy in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:
             nx, ny = cell.x + dx, cell.y + dy
-            if 0 <= nx < self.width and 0 <= ny < self.height:
-                neighbors.append(self.cells[nx][ny])
+            try:
+                if 0 <= nx < self.width and 0 <= ny < self.height:
+                    neighbors.append(self.cells[nx][ny])
+            except IndexError as e:
+                pass
+
         return neighbors
+
 
     def update(self):
         """Apply Game of Life rules to each cell in the grid."""
@@ -378,7 +383,7 @@ legende_button_rect = pygame.Rect(1100, 0, 100, 50)
 legende_button_caption = myfont.render("Legende", 1, (255, 255, 255))
 
 legende_surface_color = (100, 100, 100) 
-legende_surface_rect = pygame.Rect(800, 0, 400, 330) 
+legende_surface_rect = pygame.Rect(800, 0, 400, 560) 
 
 # Pygame setup and main loop
 def main(): 
@@ -436,7 +441,7 @@ def main():
             FPS = int(velocity_Slider.get_value())
             cell_size = int(zoom_Slider.get_value())
             game.grid.cell_size = cell_size
-            grid_width, grid_height = 1200/cell_size, 1200/cell_size
+            grid_width, grid_height = 1200//cell_size, 1200//cell_size
             game.grid.width, game.grid.height = grid_width, grid_height
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -470,15 +475,35 @@ def main():
                 elif event.key == pygame.K_u:
                     game.apply_spell(3)
                 elif event.key == pygame.K_UP:
-                    FPS += 5
+                    if FPS < 95:
+                        FPS += 5
+                        velocity_Slider.change_value(FPS)
                 elif event.key == pygame.K_DOWN:
-                    FPS -= 5
+                    if FPS > 5:
+                        FPS -= 5
+                        velocity_Slider.change_value(FPS)
                 elif event.key == pygame.K_1:
                     selected_pattern = RLE_PATTERNS["glider"]
                 elif event.key == pygame.K_2:
                     selected_pattern = RLE_PATTERNS["blinker"]
                 elif event.key == pygame.K_3:
                     selected_pattern = RLE_PATTERNS["toad"]
+                elif event.key == pygame.K_4:
+                    selected_pattern = RLE_PATTERNS["rats"]
+                elif event.key == pygame.K_5:
+                    selected_pattern = RLE_PATTERNS["acorn"]
+                elif event.key == pygame.K_6:
+                    selected_pattern = RLE_PATTERNS["gosper_glider_gun"]
+                elif event.key == pygame.K_7:
+                    selected_pattern = RLE_PATTERNS["queen_bee_shuttle"]
+                elif event.key == pygame.K_8:
+                    selected_pattern = RLE_PATTERNS["pulsar"]
+                elif event.key == pygame.K_9:
+                    selected_pattern = RLE_PATTERNS["diehard"]
+                elif event.key == pygame.K_a:
+                    selected_pattern = RLE_PATTERNS["r_pentomino"]
+                elif event.key == pygame.K_b:
+                    selected_pattern = RLE_PATTERNS["ants"]
 
         # Update and draw
         if started:
@@ -511,6 +536,14 @@ def main():
         glider_pattern_caption = myfont.render(f'Glider: Key 1', 1, (255, 255, 255))
         blinker_pattern_caption = myfont.render(f'Blinker: Key 2', 1, (255, 255, 255))
         toad_pattern_caption = myfont.render(f'Toad: Key 3', 1, (255, 255, 255))
+        rats_pattern_caption = myfont.render(f'Rats: Key 4', 1, (255, 255, 255))
+        acorn_pattern_caption = myfont.render(f'Acorn: Key 5', 1, (255, 255, 255))
+        gosper_glider_gun_caption = myfont.render(f'Gosper Glider Gun: Key 6', 1, (255, 255, 255))
+        queen_bee_shuttle_caption = myfont.render(f'Queen Bee Shuttle: Key 7', 1, (255, 255, 255))
+        pulsar_pattern_caption = myfont.render(f'Pulsar: Key 8', 1, (255, 255, 255))
+        diehard_pattern_caption = myfont.render(f'Diehard: Key 9', 1, (255, 255, 255))
+        pentomino_pattern_caption = myfont.render(f'Pentomino: Key a', 1, (255, 255, 255))
+        ants_pattern_caption = myfont.render(f'Pentomino: Key b', 1, (255, 255, 255))
         reset_field_caption = myfont.render(f'Leeren: Key C', 1, (255, 255, 255))
         apply_spell_0_caption = myfont.render(f'Zauber 0: Key L', 1, (255, 255, 255))
         apply_spell_2_caption = myfont.render(f'Zauber 2: Key F', 1, (255, 255, 255))
@@ -535,11 +568,19 @@ def main():
             screen.blit(glider_pattern_caption, (810, 80))
             screen.blit(blinker_pattern_caption, (810, 110))
             screen.blit(toad_pattern_caption, (810, 140))
-            screen.blit(reset_field_caption, (810, 170))
-            screen.blit(apply_spell_0_caption, (810, 200))
-            screen.blit(apply_spell_2_caption, (810, 230))
-            screen.blit(apply_spell_1_caption, (810, 260))
-            screen.blit(apply_spell_3_caption, (810, 290))
+            screen.blit(rats_pattern_caption, (810, 170))
+            screen.blit(acorn_pattern_caption, (810, 200))
+            screen.blit(gosper_glider_gun_caption, (810, 230))
+            screen.blit(queen_bee_shuttle_caption, (810, 260))
+            screen.blit(pulsar_pattern_caption, (810, 290))
+            screen.blit(diehard_pattern_caption, (810, 320))
+            screen.blit(pentomino_pattern_caption, (810, 350))
+            screen.blit(ants_pattern_caption, (810, 380))
+            screen.blit(reset_field_caption, (810, 410))
+            screen.blit(apply_spell_0_caption, (810, 440))
+            screen.blit(apply_spell_2_caption, (810, 470))
+            screen.blit(apply_spell_1_caption, (810, 500))
+            screen.blit(apply_spell_3_caption, (810, 530))
         else:
             legende_opened = False
 
@@ -569,7 +610,7 @@ def main():
         screen.blit(label_fps, label_fps_offset)
         pygame.display.update()
         #pygame.display.flip()
-        clock.tick(FPS)  # Control the speed of generations (10 frames per second)
+        clock.tick(FPS) 
 
     pygame.quit()
 
