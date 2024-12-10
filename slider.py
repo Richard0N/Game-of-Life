@@ -49,3 +49,7 @@ class Slider:
 
     def get_value(self):
         return self.value
+    
+    def change_value(self, new_value):
+        self.value = new_value
+        self.circle_x = self.x + ((self.value-self.min_value)/(self.max_value-self.min_value)) * self.width
