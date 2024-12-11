@@ -188,7 +188,7 @@ class Grid:
 
     def apply_lightning(self, pos_x: int, pos_y: int):
         for i, row in enumerate(self.cells):
-            if i-pos_x <= 10:
+            if math.sqrt(pow(i - pos_x, 2)) <= 10:
                 for j, cell in enumerate(row):
                     if math.sqrt(pow(i - pos_x, 2) + pow(j - pos_y, 2)) <= 10:
                         cell.next_state = CellState.ALIVE if cell.state == CellState.DEAD else CellState.DEAD
@@ -197,7 +197,7 @@ class Grid:
     
     def apply_freeze(self, pos_x: int, pos_y: int):
         for i, row in enumerate(self.cells):
-            if i-pos_x <= 10:
+            if math.sqrt(pow(i - pos_x, 2)) <= 10:
                 for j, cell in enumerate(row):
                     if math.sqrt(pow(i - pos_x, 2) + pow(j - pos_y, 2)) <= 10:
                         cell.freezed = True
