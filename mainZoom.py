@@ -176,15 +176,7 @@ class Grid:
                 if not cell.freezed:
                     cell.update_state()
 
-    def apply_spell(self, key: int, pos_x: int = None, pos_y: int = None):
-        if key == 0:
-            self.apply_lightning(pos_x, pos_y)
-        elif key == 1:
-            self.apply_earthquake()
-        elif key == 2:
-            self.apply_freeze(pos_x, pos_y)
-        elif key == 3:
-            self.apply_unfreeze()
+ 
 
     def apply_lightning(self, pos_x: int, pos_y: int):
         for i, row in enumerate(self.cells):
