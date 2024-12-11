@@ -228,10 +228,10 @@ class Grid:
                 #1 color
                 #color = (0, 255, 0) if cell.state == CellState.ALIVE else (0, 0, 0)
                 #changing colors and calculating stats
-                if cell.state == CellState.ALIVE:
+                if cell.state == CellState.ALIVE: # Farbveränderung der lebendigen Zellen
                     if not cell.freezed:
-                        r = max(255 - 2*cell.time_not_changed, 0)
-                        g = min(cell.time_not_changed, 255)
+                        r = max(255 - 2*cell.time_not_changed, 0) # kann nie unter 0 sein
+                        g = min(cell.time_not_changed, 255) # kann nie über 255 sein
                         b = max(255 - 0.5*cell.time_not_changed, 0)
                         color = (r, g, b)
                     elif cell.freezed:
@@ -242,7 +242,7 @@ class Grid:
                     self.stats[0] += 1
                     if cell.time_not_changed == 0:
                         self.stats[2] += 1
-                else:
+                else: # Farbverlauf der nicht lebendigen Zellen --> wird schwarz
                     if not cell.freezed:
                         r, g, b = max(255 - cell.time_not_changed, 0), max(255 - cell.time_not_changed, 0), max(255 - cell.time_not_changed, 0)
                         color = (r, g, b)
@@ -263,7 +263,7 @@ class Grid:
 
         difference = new_num - old_num
 
-        if difference < 0:
+        if difference < 0: # reinzoomen
             diff_top = difference // 2
             diff_bottom = difference - diff_top
 
@@ -272,17 +272,17 @@ class Grid:
 
             new_cells = [[Cell(x, y) for y in range(new_num)] for x in range(new_num)]
 
-            for row_index, row in enumerate(new_cells):
+            for row_index, row in enumerate(new_cells): #
                 for col_index, cell in enumerate(row):
                     if (diff_top-1 < row_index) and (row_index < new_num-diff_bottom-1) and (diff_left - 1 < col_index) and (col_index < new_num - diff_right-1):
-                        # retrieve the cell of self.cells
+                        # Zelle aus self.cells holen
                         old_cell = self.cells[row_index-diff_top][col_index-diff_left]
                         new_cells[row_index][col_index].state, new_cells[row_index][col_index].next_state, new_cells[row_index][col_index].freezed, new_cells[row_index][col_index].time_not_changed = old_cell.state, old_cell.next_state, old_cell.freezed, old_cell.time_not_changed
 
             self.cells = []
             self.cells.extend(new_cells)
 
-        elif difference > 0:
+        elif difference > 0: # rauszoomen
             diff_top = difference // 2
             diff_bottom = difference - diff_top
 
@@ -291,10 +291,10 @@ class Grid:
 
             new_cells = [[Cell(x, y) for y in range(new_num)] for x in range(new_num)]
 
-            for row_index, row in enumerate(self.cells):
+            for row_index, row in enumerate(self.cells): #
                 for col_index, cell in enumerate(row):
                     if (diff_top-1 < row_index) and (row_index < new_num-diff_bottom-1) and (diff_left - 1 < col_index) and (col_index < new_num - diff_right-1):
-                        # retrieve the cell of self.cells
+                        # Zelle aus self.cells holen
                         old_cell = self.cells[row_index-diff_top][col_index-diff_left]
                         new_cells[row_index][col_index].state, new_cells[row_index][col_index].next_state, new_cells[row_index][col_index].freezed, new_cells[row_index][col_index].time_not_changed = old_cell.state, old_cell.next_state, old_cell.freezed, old_cell.time_not_changed
 
@@ -374,7 +374,7 @@ class GUI:
         cell_size = 12 # speichert die Größe der quadratischen Zelle
         grid_width, grid_height = 100, 100  # bestimmt Anzahl der Zeilen und Spalten im Feld
         
-        red_button_offset = (grid_width * cell_size/2-150, grid_height * cell_size+10) # offset vom play Button
+        red_button_offset = (grid_width * cell_size/2-150, grid_height * cell_size+10) # offset vom play Button, grid_width * cell_size / 2 = Hälft der Ges Breite, dann -150; grid_height * cell_size = 1200, dann + 10
         blue_button_offset = (grid_width * cell_size/2, grid_height * cell_size+10) # offset vom random Button
         green_button_offset = (grid_width * cell_size/2+150, grid_height * cell_size+10) # offset vom reset Button
         label_count_offset = (grid_width * cell_size-200, grid_height * cell_size+10) # offset für count Label unten rechts
