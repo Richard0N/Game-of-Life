@@ -309,7 +309,6 @@ class GameOfLife:
         self.height = height
         self.cell_size = cell_size
         self.grid = Grid(width, height, cell_size)
-        self.generation = 0
 
     def initialize(self):
         """Initialize the grid with a random setup of alive and dead cells."""
