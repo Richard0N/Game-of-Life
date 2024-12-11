@@ -1,16 +1,19 @@
-import pygame
+import math
 #import pygame_gui
 import random
 from enum import Enum
 from typing import List, Tuple
-import math
+
+import pygame
+
+import slider
 from pattern_library import patterns
-import slider 
+from supabasePatterns import addPattern, deletePattern, getPatterns
 
 pygame.init()
 myfont = pygame.font.SysFont("monospace", 20)
 
-RLE_PATTERNS = patterns
+RLE_PATTERNS = getPatterns()
 
 # Enum for cell states
 class CellState(Enum):
@@ -606,6 +609,7 @@ class GUI:
 
 def main():
     gui = GUI()
+    print(getPatterns())
 
 # Run the game
 if __name__ == "__main__":
