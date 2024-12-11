@@ -44,9 +44,6 @@ class Slider:
     def is_hovering(self, mouse_pos):
         # gibt zurück, ob die Maus gerade auf dem Slider ist (muss zwischen x bzw. y und der drauf addierten Höhe bzw. Breite liegen)
         return self.x <= mouse_pos[0] <= self.x + self.width and self.y - self.height <= mouse_pos[1] <= self.y + self.height
-
-    def get_value(self):
-        return self.value # gibt Wert zurück
     
     def change_value(self, new_value):
         self.value = new_value # ändert Wert
