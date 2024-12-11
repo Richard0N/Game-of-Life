@@ -24,7 +24,7 @@ pip install -r requirements.txt
 3. Start the Game:
 
 ```bash
-python mainZoom.py
+python main.py
 ```
 
 ✅ The Game should now be running.
