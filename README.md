@@ -1,8 +1,6 @@
 # 🌌 **Game of Life in Python** 🚀
 
-Welcome to the **Game of Life** project! This project is a Python-based implementation of **Conway's Game of Life**, a fascinating cellular automaton simulation that demonstrates how simple rules can create intricate patterns and dynamic behaviors.
-
-The Game is powered by **Python**.
+Welcome to the **Game of Life** project! This project is a **Python-based** implementation of **Conway's Game of Life**, a fascinating cellular automaton simulation that demonstrates how simple rules can create intricate patterns and dynamic behaviors.
 
 ---
 
