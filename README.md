@@ -16,7 +16,7 @@ Welcome to the **Game of Life** project! This project is a **Python-based** impl
 
 1. Open the terminal.
 
-2.Install the Python dependencies:
+2. Install the Python dependencies:
 
 ```bash
 pip install -r requirements.txt
