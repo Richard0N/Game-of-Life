@@ -1,5 +1,4 @@
 import math
-#import pygame_gui
 import random
 from enum import Enum
 from typing import List, Tuple
@@ -8,7 +7,7 @@ import pygame
 
 import slider
 from pattern_library import patterns
-from supabasePatterns import addPattern, deletePattern, getPatterns
+from supabasePatterns import getPatterns
 
 pygame.init()
 myfont = pygame.font.SysFont("monospace", 20)
@@ -609,7 +608,6 @@ class GUI:
 
 def main():
     gui = GUI()
-    print(getPatterns())
 
 # Run the game
 if __name__ == "__main__":
