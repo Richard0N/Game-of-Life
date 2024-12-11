@@ -23,12 +23,12 @@ class Cell:
         self.x = x
         self.y = y
         self.state = state
-        self.next_state = state  # Stores the next state after applying rules
+        self.next_state = state  # Speichert nächsten Stand nachdem Regeln angewendet wurden
         self.time_not_changed = 0
         self.freezed = freezed
 
     def determine_next_state(self, neighbors: List['Cell']):
-        """Determine the cell's next state based on Game of Life rules."""
+        """Determine the cell's next state based on Game of Life rules"""
         alive_neighbors = sum(1 for neighbor in neighbors if neighbor.state == CellState.ALIVE)
 
         if self.state == CellState.ALIVE:
@@ -36,7 +36,7 @@ class Cell:
         else:
             self.next_state = CellState.ALIVE if alive_neighbors == 3 else CellState.DEAD
 
-        '''Count for time, that a cell did not change'''
+        '''Count, that a cell did not change'''
         if self.state == self.next_state:
             if not self.freezed:
                 self.time_not_changed += 1
@@ -44,7 +44,7 @@ class Cell:
             self.time_not_changed = 0
 
     def update_state(self):
-        """Update cell's state to its next state."""
+        """Update cell's state to its next state"""
         self.state = self.next_state
 
 
@@ -57,17 +57,6 @@ class Grid:
         self.cells = [[Cell(x, y) for y in range(height)] for x in range(width)]
         self.stats = [0, 0, 0, 0]  # Alive, Dead, New Alive, New Dead
 
-    def to_dict(self):
-        self.get_stats()
-        return {
-            "width": self.width,
-            "height": self.height,
-            "cells": [[cell.state.value for cell in row] for row in self.cells],
-            "stats": self.stats,
-            "cell_size": self.cell_size,
-            "cell_age": [[cell.time_not_changed for cell in row] for row in self.cells],
-            "freezed": [[cell.freezed for cell in row] for row in self.cells]
-        }
 
     def apply_rle_pattern(self, rle: str):
         """Wendet ein RLE-Pattern auf das Grid an."""
@@ -135,7 +124,7 @@ class Grid:
         """Randomly initialize the grid with alive and dead cells."""
         for row in self.cells:
             for cell in row:
-                cell.state = CellState.ALIVE if random.random() > 0.7 else CellState.DEAD
+                cell.state = CellState.ALIVE if random.random() > 0.7 else CellState.DEAD # mehr DEAD Zellen (größere Wahrscheinlichkeit)
                 cell.time_not_changed = 0
     
     def change_cell_state(self, x, y):
@@ -385,234 +374,238 @@ legende_button_caption = myfont.render("Legende", 1, (255, 255, 255))
 legende_surface_color = (100, 100, 100) 
 legende_surface_rect = pygame.Rect(800, 0, 400, 560) 
 
-# Pygame setup and main loop
-def main(): 
-    FPS = 60
-    cell_size = 12
-    grid_width, grid_height = 100, 100  # Defines the grid size in terms of cells
-    #grid_width, grid_height = 1200//cell_size, 1200//cell_size
-    red_button_offset = (grid_width * cell_size/2-150, grid_height * cell_size+10)
-    blue_button_offset = (grid_width * cell_size/2, grid_height * cell_size+10)
-    green_button_offset = (grid_width * cell_size/2+150, grid_height * cell_size+10)
-    label_count_offset = (grid_width * cell_size-200, grid_height * cell_size+10)
-    label_fps_offset = (grid_width * cell_size-200, grid_height * cell_size+30)
-    stat_label_1_offset = (70, 50)
-    stat_label_2_offset = (70, 80)
-    zoom_Slider_pos = (300, 1235)
-    velocity_Slider_pos = (80, 1235)
-    #stat_label_3_offset = (70, 110)
-    #stat_label_4_offset = (70, 140)
-    #screen = pygame.display.set_mode((grid_width * cell_size, grid_height * cell_size+100))
-    screen = pygame.display.set_mode((1200,1300))
-    pygame.display.set_caption("Conway's Game of Life")
-    #manager = pygame_gui.UIManager((800, 600))
-    clock = pygame.time.Clock()
+# Setup der GUI
+class GUI:
+    def __init__(self): 
+        FPS = 60
+        cell_size = 12
+        grid_width, grid_height = 100, 100  # Defines the grid size in terms of cells
+        #grid_width, grid_height = 1200//cell_size, 1200//cell_size
+        red_button_offset = (grid_width * cell_size/2-150, grid_height * cell_size+10)
+        blue_button_offset = (grid_width * cell_size/2, grid_height * cell_size+10)
+        green_button_offset = (grid_width * cell_size/2+150, grid_height * cell_size+10)
+        label_count_offset = (grid_width * cell_size-200, grid_height * cell_size+10)
+        label_fps_offset = (grid_width * cell_size-200, grid_height * cell_size+30)
+        stat_label_1_offset = (70, 50)
+        stat_label_2_offset = (70, 80)
+        zoom_Slider_pos = (300, 1235)
+        velocity_Slider_pos = (80, 1235)
+        #stat_label_3_offset = (70, 110)
+        #stat_label_4_offset = (70, 140)
+        #screen = pygame.display.set_mode((grid_width * cell_size, grid_height * cell_size+100))
+        screen = pygame.display.set_mode((1200,1300))
+        pygame.display.set_caption("Conway's Game of Life")
+        #manager = pygame_gui.UIManager((800, 600))
+        clock = pygame.time.Clock()
 
-    # Sliders (zoom and velocity)
-    zoom_Slider = slider.Slider(zoom_Slider_pos[0], zoom_Slider_pos[1], 100, 5, min_value= 5, max_value=20, startValue=12)
-    velocity_Slider = slider.Slider(velocity_Slider_pos[0], velocity_Slider_pos[1], 100, 5, min_value= 1, max_value=100, startValue=60)
+        # Sliders (zoom and velocity)
+        zoom_Slider = slider.Slider(zoom_Slider_pos[0], zoom_Slider_pos[1], 100, 5, min_value= 5, max_value=20, startValue=12)
+        velocity_Slider = slider.Slider(velocity_Slider_pos[0], velocity_Slider_pos[1], 100, 5, min_value= 1, max_value=100, startValue=60)
 
-    # Initialize game
-    game = GameOfLife(grid_width, grid_height, cell_size)
-    game.initialize()
+        # Initialize game
+        game = GameOfLife(grid_width, grid_height, cell_size)
+        game.initialize()
 
-    running = True
-    started = False
-    selected_pattern = None
-    stats_opened = False
-    legende_opened = False
-    count = 0
-    while running:
-        screen.fill((0, 0, 0))
+        running = True
+        started = False
+        selected_pattern = None
+        stats_opened = False
+        legende_opened = False
+        count = 0
+        while running:
+            screen.fill((0, 0, 0))
 
-        # Event handling
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+            # Event handling
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
 
-            pos = pygame.mouse.get_pos()
+                pos = pygame.mouse.get_pos()
 
-            #Update Sliders
-            mouse_pressed = pygame.mouse.get_pressed()[0]
-            zoom_Slider.update(pos, mouse_pressed)
-            velocity_Slider.update(pos, mouse_pressed)
+                #Update Sliders
+                mouse_pressed = pygame.mouse.get_pressed()[0]
+                zoom_Slider.update(pos, mouse_pressed)
+                velocity_Slider.update(pos, mouse_pressed)
+                
+                #Update velocity (FPS)
+                FPS = int(velocity_Slider.get_value())
+                cell_size = int(zoom_Slider.get_value())
+                game.grid.cell_size = cell_size
+                grid_width, grid_height = 1200//cell_size, 1200//cell_size
+                game.grid.width, game.grid.height = grid_width, grid_height
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if red_button.get_rect(topleft=red_button_offset).collidepoint(pos):
+                        started = not started
+                    if not started and 0<=pos[0]<=(grid_width * cell_size) and 0<=pos[1]<=(grid_height * cell_size):
+                        pos_cell = [pos[0]//cell_size, pos[1]//cell_size]
+                        cell = game.grid.cells[pos_cell[0]][pos_cell[1]]
+                        if cell.state == CellState.ALIVE: cell.state = CellState.DEAD 
+                        else: cell.state = CellState.ALIVE
+                    if not started and blue_button.get_rect(topleft=blue_button_offset).collidepoint(pos):
+                        game.initialize_automatically()
+                        count = 0
+                    if green_button.get_rect(topleft=green_button_offset).collidepoint(pos):
+                        game.grid.reset_field()
+                        count = 0
+                        started = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_l:
+                        if 0<=pos[0]<=(grid_width * cell_size) and 0<=pos[1]<=(grid_height * cell_size):
+                            game.apply_spell(0, pos[0]/cell_size, pos[1]/cell_size)
+                    if event.key == pygame.K_f:
+                        if 0<=pos[0]<=(grid_width * cell_size) and 0<=pos[1]<=(grid_height * cell_size):
+                            game.apply_spell(2, pos[0]/cell_size, pos[1]/cell_size)
+                    elif event.key == pygame.K_e:
+                        game.apply_spell(1)
+                    elif event.key == pygame.K_c:
+                        game.grid.reset_field()
+                        count = 0
+                        started = False
+                    elif event.key == pygame.K_u:
+                        game.apply_spell(3)
+                    elif event.key == pygame.K_UP:
+                        if FPS < 95:
+                            FPS += 5
+                            velocity_Slider.change_value(FPS)
+                    elif event.key == pygame.K_DOWN:
+                        if FPS > 5:
+                            FPS -= 5
+                            velocity_Slider.change_value(FPS)
+                    elif event.key == pygame.K_1:
+                        selected_pattern = RLE_PATTERNS["glider"]
+                    elif event.key == pygame.K_2:
+                        selected_pattern = RLE_PATTERNS["blinker"]
+                    elif event.key == pygame.K_3:
+                        selected_pattern = RLE_PATTERNS["toad"]
+                    elif event.key == pygame.K_4:
+                        selected_pattern = RLE_PATTERNS["rats"]
+                    elif event.key == pygame.K_5:
+                        selected_pattern = RLE_PATTERNS["acorn"]
+                    elif event.key == pygame.K_6:
+                        selected_pattern = RLE_PATTERNS["gosper_glider_gun"]
+                    elif event.key == pygame.K_7:
+                        selected_pattern = RLE_PATTERNS["queen_bee_shuttle"]
+                    elif event.key == pygame.K_8:
+                        selected_pattern = RLE_PATTERNS["pulsar"]
+                    elif event.key == pygame.K_9:
+                        selected_pattern = RLE_PATTERNS["diehard"]
+                    elif event.key == pygame.K_a:
+                        selected_pattern = RLE_PATTERNS["r_pentomino"]
+                    elif event.key == pygame.K_b:
+                        selected_pattern = RLE_PATTERNS["ants"]
+
+            # Update and draw
+            if started:
+                game.next_generation()
+                count += 1
+
+            if selected_pattern:
+                game.grid.apply_rle_pattern(selected_pattern)
+                selected_pattern = None
+
+            game.grid.draw(screen) 
+            zoom_Slider.draw(screen)
+            velocity_Slider.draw(screen)
+
+            stat_label_1 = myfont.render(f'Cells alive: {game.grid.stats[0]}', 1, (255,255,0))
+            stat_label_2 = myfont.render(f'Cells dead: {game.grid.stats[1]}', 1, (255,255,0))
+            stat_button_caption = myfont.render(f'Stats', 1, (255,255,255))
+
+            legende_button_caption = myfont.render(f'Legende', 1, (255,255,255))
+
+            random_button_caption = myfont.render(f'Random', 1, (255,255,255))
+            zoom_slider_caption = myfont.render(f'Zoom:', 1, (255,255,255))
+            velocity_Slider_caption = myfont.render(f'V:',1, (255,255,255))
+            velocity_Slider_value = myfont.render(f'{FPS}', 1, (255,255,255))
+            zoom_Slider_value = myfont.render(f'{cell_size}',1, (255,255,255))
+
+            # Legende properties
+            increase_fps_caption = myfont.render(f'Erhöhe V: Key Up', 1, (255, 255, 255))
+            decrease_fps_caption = myfont.render(f'Vermindere V: Key Down', 1, (255, 255, 255))
+            glider_pattern_caption = myfont.render(f'Glider: Key 1', 1, (255, 255, 255))
+            blinker_pattern_caption = myfont.render(f'Blinker: Key 2', 1, (255, 255, 255))
+            toad_pattern_caption = myfont.render(f'Toad: Key 3', 1, (255, 255, 255))
+            rats_pattern_caption = myfont.render(f'Rats: Key 4', 1, (255, 255, 255))
+            acorn_pattern_caption = myfont.render(f'Acorn: Key 5', 1, (255, 255, 255))
+            gosper_glider_gun_caption = myfont.render(f'Gosper Glider Gun: Key 6', 1, (255, 255, 255))
+            queen_bee_shuttle_caption = myfont.render(f'Queen Bee Shuttle: Key 7', 1, (255, 255, 255))
+            pulsar_pattern_caption = myfont.render(f'Pulsar: Key 8', 1, (255, 255, 255))
+            diehard_pattern_caption = myfont.render(f'Diehard: Key 9', 1, (255, 255, 255))
+            pentomino_pattern_caption = myfont.render(f'Pentomino: Key a', 1, (255, 255, 255))
+            ants_pattern_caption = myfont.render(f'Pentomino: Key b', 1, (255, 255, 255))
+            reset_field_caption = myfont.render(f'Leeren: Key C', 1, (255, 255, 255))
+            apply_spell_0_caption = myfont.render(f'Zauber 0: Key L', 1, (255, 255, 255))
+            apply_spell_2_caption = myfont.render(f'Zauber 2: Key F', 1, (255, 255, 255))
+            apply_spell_1_caption = myfont.render(f'Zauber 1: Key E', 1, (255, 255, 255))
+            apply_spell_3_caption = myfont.render(f'Zauber 3: Key U', 1, (255, 255, 255)) 
+
+
+            if (stat_button.get_rect().collidepoint(pos) and stats_opened == False) or (stat_surface.get_rect().collidepoint(pos) and stats_opened == True):
+                stats_opened = True
+                screen.blit(stat_surface, (0, 0))
+                screen.blit(stat_label_1, stat_label_1_offset)
+                screen.blit(stat_label_2, stat_label_2_offset)
+                #screen.blit(stat_label_3, stat_label_3_offset)
+                #screen.blit(stat_label_4, stat_label_4_offset)
+            else: stats_opened = False
+
+            if legende_button_rect.collidepoint(pos) and not legende_opened or legende_surface_rect.collidepoint(pos) and legende_opened == True:
+                legende_opened = True
+                pygame.draw.rect(screen, legende_surface_color, legende_surface_rect)
+                screen.blit(increase_fps_caption, (810, 20))
+                screen.blit(decrease_fps_caption, (810, 50))
+                screen.blit(glider_pattern_caption, (810, 80))
+                screen.blit(blinker_pattern_caption, (810, 110))
+                screen.blit(toad_pattern_caption, (810, 140))
+                screen.blit(rats_pattern_caption, (810, 170))
+                screen.blit(acorn_pattern_caption, (810, 200))
+                screen.blit(gosper_glider_gun_caption, (810, 230))
+                screen.blit(queen_bee_shuttle_caption, (810, 260))
+                screen.blit(pulsar_pattern_caption, (810, 290))
+                screen.blit(diehard_pattern_caption, (810, 320))
+                screen.blit(pentomino_pattern_caption, (810, 350))
+                screen.blit(ants_pattern_caption, (810, 380))
+                screen.blit(reset_field_caption, (810, 410))
+                screen.blit(apply_spell_0_caption, (810, 440))
+                screen.blit(apply_spell_2_caption, (810, 470))
+                screen.blit(apply_spell_1_caption, (810, 500))
+                screen.blit(apply_spell_3_caption, (810, 530))
+            else:
+                legende_opened = False
+
+
+            # Buttons anzeigen
+            for i, (name, rle) in enumerate(RLE_PATTERNS.items()):
+                label = myfont.render(f"{i+1}: {name}", 1, (255, 255, 255))
+                screen.blit(label, (grid_width * cell_size + 10, 30 * i + 10))
             
-            #Update velocity (FPS)
-            FPS = int(velocity_Slider.get_value())
-            cell_size = int(zoom_Slider.get_value())
-            game.grid.cell_size = cell_size
-            grid_width, grid_height = 1200//cell_size, 1200//cell_size
-            game.grid.width, game.grid.height = grid_width, grid_height
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if red_button.get_rect(topleft=red_button_offset).collidepoint(pos):
-                    started = not started
-                if not started and 0<=pos[0]<=(grid_width * cell_size) and 0<=pos[1]<=(grid_height * cell_size):
-                    pos_cell = [pos[0]//cell_size, pos[1]//cell_size]
-                    cell = game.grid.cells[pos_cell[0]][pos_cell[1]]
-                    if cell.state == CellState.ALIVE: cell.state = CellState.DEAD 
-                    else: cell.state = CellState.ALIVE
-                if not started and blue_button.get_rect(topleft=blue_button_offset).collidepoint(pos):
-                    game.initialize_automatically()
-                    count = 0
-                if green_button.get_rect(topleft=green_button_offset).collidepoint(pos):
-                    game.grid.reset_field()
-                    count = 0
-                    started = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_l:
-                    if 0<=pos[0]<=(grid_width * cell_size) and 0<=pos[1]<=(grid_height * cell_size):
-                        game.apply_spell(0, pos[0]/cell_size, pos[1]/cell_size)
-                if event.key == pygame.K_f:
-                    if 0<=pos[0]<=(grid_width * cell_size) and 0<=pos[1]<=(grid_height * cell_size):
-                        game.apply_spell(2, pos[0]/cell_size, pos[1]/cell_size)
-                elif event.key == pygame.K_e:
-                    game.apply_spell(1)
-                elif event.key == pygame.K_c:
-                    game.grid.reset_field()
-                    count = 0
-                    started = False
-                elif event.key == pygame.K_u:
-                    game.apply_spell(3)
-                elif event.key == pygame.K_UP:
-                    if FPS < 95:
-                        FPS += 5
-                        velocity_Slider.change_value(FPS)
-                elif event.key == pygame.K_DOWN:
-                    if FPS > 5:
-                        FPS -= 5
-                        velocity_Slider.change_value(FPS)
-                elif event.key == pygame.K_1:
-                    selected_pattern = RLE_PATTERNS["glider"]
-                elif event.key == pygame.K_2:
-                    selected_pattern = RLE_PATTERNS["blinker"]
-                elif event.key == pygame.K_3:
-                    selected_pattern = RLE_PATTERNS["toad"]
-                elif event.key == pygame.K_4:
-                    selected_pattern = RLE_PATTERNS["rats"]
-                elif event.key == pygame.K_5:
-                    selected_pattern = RLE_PATTERNS["acorn"]
-                elif event.key == pygame.K_6:
-                    selected_pattern = RLE_PATTERNS["gosper_glider_gun"]
-                elif event.key == pygame.K_7:
-                    selected_pattern = RLE_PATTERNS["queen_bee_shuttle"]
-                elif event.key == pygame.K_8:
-                    selected_pattern = RLE_PATTERNS["pulsar"]
-                elif event.key == pygame.K_9:
-                    selected_pattern = RLE_PATTERNS["diehard"]
-                elif event.key == pygame.K_a:
-                    selected_pattern = RLE_PATTERNS["r_pentomino"]
-                elif event.key == pygame.K_b:
-                    selected_pattern = RLE_PATTERNS["ants"]
-
-        # Update and draw
-        if started:
-            game.next_generation()
-            count += 1
-
-        if selected_pattern:
-            game.grid.apply_rle_pattern(selected_pattern)
-            selected_pattern = None
-
-        game.grid.draw(screen) 
-        zoom_Slider.draw(screen)
-        velocity_Slider.draw(screen)
-
-        stat_label_1 = myfont.render(f'Cells alive: {game.grid.stats[0]}', 1, (255,255,0))
-        stat_label_2 = myfont.render(f'Cells dead: {game.grid.stats[1]}', 1, (255,255,0))
-        stat_button_caption = myfont.render(f'Stats', 1, (255,255,255))
-
-        legende_button_caption = myfont.render(f'Legende', 1, (255,255,255))
-
-        random_button_caption = myfont.render(f'Random', 1, (255,255,255))
-        zoom_slider_caption = myfont.render(f'Zoom:', 1, (255,255,255))
-        velocity_Slider_caption = myfont.render(f'V:',1, (255,255,255))
-        velocity_Slider_value = myfont.render(f'{FPS}', 1, (255,255,255))
-        zoom_Slider_value = myfont.render(f'{cell_size}',1, (255,255,255))
-
-        # Legende properties
-        increase_fps_caption = myfont.render(f'Erhöhe V: Key Up', 1, (255, 255, 255))
-        decrease_fps_caption = myfont.render(f'Vermindere V: Key Down', 1, (255, 255, 255))
-        glider_pattern_caption = myfont.render(f'Glider: Key 1', 1, (255, 255, 255))
-        blinker_pattern_caption = myfont.render(f'Blinker: Key 2', 1, (255, 255, 255))
-        toad_pattern_caption = myfont.render(f'Toad: Key 3', 1, (255, 255, 255))
-        rats_pattern_caption = myfont.render(f'Rats: Key 4', 1, (255, 255, 255))
-        acorn_pattern_caption = myfont.render(f'Acorn: Key 5', 1, (255, 255, 255))
-        gosper_glider_gun_caption = myfont.render(f'Gosper Glider Gun: Key 6', 1, (255, 255, 255))
-        queen_bee_shuttle_caption = myfont.render(f'Queen Bee Shuttle: Key 7', 1, (255, 255, 255))
-        pulsar_pattern_caption = myfont.render(f'Pulsar: Key 8', 1, (255, 255, 255))
-        diehard_pattern_caption = myfont.render(f'Diehard: Key 9', 1, (255, 255, 255))
-        pentomino_pattern_caption = myfont.render(f'Pentomino: Key a', 1, (255, 255, 255))
-        ants_pattern_caption = myfont.render(f'Pentomino: Key b', 1, (255, 255, 255))
-        reset_field_caption = myfont.render(f'Leeren: Key C', 1, (255, 255, 255))
-        apply_spell_0_caption = myfont.render(f'Zauber 0: Key L', 1, (255, 255, 255))
-        apply_spell_2_caption = myfont.render(f'Zauber 2: Key F', 1, (255, 255, 255))
-        apply_spell_1_caption = myfont.render(f'Zauber 1: Key E', 1, (255, 255, 255))
-        apply_spell_3_caption = myfont.render(f'Zauber 3: Key U', 1, (255, 255, 255)) 
+            screen.blit(red_button, red_button_offset) 
+            screen.blit(blue_button, blue_button_offset) 
+            screen.blit(green_button, green_button_offset)
+            screen.blit(stat_button, (0, 0))
+            screen.blit(stat_button_caption, (5,15))
+            screen.blit(random_button_caption, (blue_button_offset[0]+23, blue_button_offset[1]+12))
+            screen.blit(zoom_slider_caption, (zoom_Slider_pos[0]-65, zoom_Slider_pos[1]-10))
+            screen.blit(velocity_Slider_caption, (velocity_Slider_pos[0]-40, velocity_Slider_pos[1]-10))
+            screen.blit(velocity_Slider_value, (velocity_Slider_pos[0]+(velocity_Slider.width/2), velocity_Slider_pos[1]+20))
+            screen.blit(zoom_Slider_value, (zoom_Slider_pos[0]+ (zoom_Slider.width/2), zoom_Slider_pos[1]+20))
+            pygame.draw.rect(screen, legende_button_color, legende_button_rect)
+            screen.blit(legende_button_caption, (1105, 15))
 
 
-        if (stat_button.get_rect().collidepoint(pos) and stats_opened == False) or (stat_surface.get_rect().collidepoint(pos) and stats_opened == True):
-            stats_opened = True
-            screen.blit(stat_surface, (0, 0))
-            screen.blit(stat_label_1, stat_label_1_offset)
-            screen.blit(stat_label_2, stat_label_2_offset)
-            #screen.blit(stat_label_3, stat_label_3_offset)
-            #screen.blit(stat_label_4, stat_label_4_offset)
-        else: stats_opened = False
+            label_count = myfont.render(f'Count: {count}', 1, (255,255,0))
+            screen.blit(label_count, label_count_offset)
+            label_fps = myfont.render(f'FPS: {FPS}', 1, (255,255,0))
+            screen.blit(label_fps, label_fps_offset)
+            pygame.display.update()
+            #pygame.display.flip()
+            clock.tick(FPS) 
 
-        if legende_button_rect.collidepoint(pos) and not legende_opened or legende_surface_rect.collidepoint(pos) and legende_opened == True:
-            legende_opened = True
-            pygame.draw.rect(screen, legende_surface_color, legende_surface_rect)
-            screen.blit(increase_fps_caption, (810, 20))
-            screen.blit(decrease_fps_caption, (810, 50))
-            screen.blit(glider_pattern_caption, (810, 80))
-            screen.blit(blinker_pattern_caption, (810, 110))
-            screen.blit(toad_pattern_caption, (810, 140))
-            screen.blit(rats_pattern_caption, (810, 170))
-            screen.blit(acorn_pattern_caption, (810, 200))
-            screen.blit(gosper_glider_gun_caption, (810, 230))
-            screen.blit(queen_bee_shuttle_caption, (810, 260))
-            screen.blit(pulsar_pattern_caption, (810, 290))
-            screen.blit(diehard_pattern_caption, (810, 320))
-            screen.blit(pentomino_pattern_caption, (810, 350))
-            screen.blit(ants_pattern_caption, (810, 380))
-            screen.blit(reset_field_caption, (810, 410))
-            screen.blit(apply_spell_0_caption, (810, 440))
-            screen.blit(apply_spell_2_caption, (810, 470))
-            screen.blit(apply_spell_1_caption, (810, 500))
-            screen.blit(apply_spell_3_caption, (810, 530))
-        else:
-            legende_opened = False
+        pygame.quit()
 
-
-         # Buttons anzeigen
-        for i, (name, rle) in enumerate(RLE_PATTERNS.items()):
-            label = myfont.render(f"{i+1}: {name}", 1, (255, 255, 255))
-            screen.blit(label, (grid_width * cell_size + 10, 30 * i + 10))
-        
-        screen.blit(red_button, red_button_offset) 
-        screen.blit(blue_button, blue_button_offset) 
-        screen.blit(green_button, green_button_offset)
-        screen.blit(stat_button, (0, 0))
-        screen.blit(stat_button_caption, (5,15))
-        screen.blit(random_button_caption, (blue_button_offset[0]+23, blue_button_offset[1]+12))
-        screen.blit(zoom_slider_caption, (zoom_Slider_pos[0]-65, zoom_Slider_pos[1]-10))
-        screen.blit(velocity_Slider_caption, (velocity_Slider_pos[0]-40, velocity_Slider_pos[1]-10))
-        screen.blit(velocity_Slider_value, (velocity_Slider_pos[0]+(velocity_Slider.width/2), velocity_Slider_pos[1]+20))
-        screen.blit(zoom_Slider_value, (zoom_Slider_pos[0]+ (zoom_Slider.width/2), zoom_Slider_pos[1]+20))
-        pygame.draw.rect(screen, legende_button_color, legende_button_rect)
-        screen.blit(legende_button_caption, (1105, 15))
-
-
-        label_count = myfont.render(f'Count: {count}', 1, (255,255,0))
-        screen.blit(label_count, label_count_offset)
-        label_fps = myfont.render(f'FPS: {FPS}', 1, (255,255,0))
-        screen.blit(label_fps, label_fps_offset)
-        pygame.display.update()
-        #pygame.display.flip()
-        clock.tick(FPS) 
-
-    pygame.quit()
+def main():
+    gui = GUI()
 
 # Run the game
 if __name__ == "__main__":
