@@ -421,8 +421,8 @@ class GUI:
                 velocity_Slider.update(pos, mouse_pressed)
                 
                 #Update velocity (FPS)
-                FPS = int(velocity_Slider.get_value())
-                cell_size = int(zoom_Slider.get_value())
+                FPS = int(velocity_Slider.value)
+                cell_size = int(zoom_Slider.value)
                 game.grid.cell_size = cell_size
                 grid_width, grid_height = 1200//cell_size, 1200//cell_size
                 game.grid.width, game.grid.height = grid_width, grid_height
