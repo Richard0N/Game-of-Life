@@ -20,7 +20,8 @@ class Slider:
         self.is_dragging = False
 
     def draw(self, screen):
-        pygame.draw.line(screen, self.GRAY, (self.x, self.y), (self.x + self.width, self.y), self.height) # Slider zeichnen
+                        # surface, color,    start_pos,         end_pos,                     width (Breite hier durch Höhe gekennzeichnet)
+        pygame.draw.line(screen, self.GRAY, (self.x, self.y), (self.x + self.width, self.y), self.height) # Slider zeichnen (Linie)
         pygame.draw.circle(screen, self.BLUE, (self.circle_x, self.circle_y), self.circle_radius) # Kreis für den Slider auf die Benutzeroberfläche legen (auf die Linie)
 
     def update(self, mouse_pos, mouse_pressed):
