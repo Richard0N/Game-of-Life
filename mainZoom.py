@@ -237,7 +237,7 @@ class Grid:
                     elif cell.freezed:
                         r = int(max(255 - 2*cell.time_not_changed, 0)*0.8)
                         g = int(min(cell.time_not_changed, 255)*0.9)
-                        b = int(max(255 - 0.5*cell.time_not_changed, 0) + (255 - max(255 - 0.5*cell.time_not_changed, 0))*0.2)
+                        b = int(max(255 - 0.5*cell.time_not_changed, 0) + (255 - max(255 - 0.5*cell.time_not_changed, 0))*0.2) # time_not changed ändert sich nicht, daher auch keine Änderung der Farben bei Freeze
                         color = (r, g, b)
                     self.stats[0] += 1
                     if cell.time_not_changed == 0:
