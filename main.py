@@ -361,37 +361,37 @@ stat_surface = pygame.Surface((400, 200))
 stat_surface.fill((100, 100, 100))
 
 legende_button_color = (50, 50, 50) 
-legende_button_rect = pygame.Rect(1100, 0, 100, 50) 
+legende_button_rect = pygame.Rect(800, 0, 100, 50) 
 legende_button_caption = myfont.render("Legende", 1, (255, 255, 255))
 
 legende_surface_color = (100, 100, 100) 
-legende_surface_rect = pygame.Rect(800, 0, 400, 560) 
+legende_surface_rect = pygame.Rect(500, 0, 400, 560) 
 
 # Setup der GUI
 class GUI:
     def __init__(self): 
         FPS = 60 # Variable, die die Geschwindigkeit speichert (gemessen in FPS)
-        cell_size = 12 # speichert die Größe der quadratischen Zelle
+        cell_size = 9 # speichert die Größe der quadratischen Zelle
         grid_width, grid_height = 100, 100  # bestimmt Anzahl der Zeilen und Spalten im Feld
         
-        red_button_offset = (grid_width * cell_size/2-150, grid_height * cell_size+10) # offset vom play Button, grid_width * cell_size / 2 = Hälft der Ges Breite, dann -150; grid_height * cell_size = 1200, dann + 10
-        blue_button_offset = (grid_width * cell_size/2, grid_height * cell_size+10) # offset vom random Button
+        red_button_offset = (grid_width * cell_size/2-110, grid_height * cell_size+10) # offset vom play Button, grid_width * cell_size / 2 = Hälft der Ges Breite, dann -150; grid_height * cell_size = 1200, dann + 10
+        blue_button_offset = (grid_width * cell_size/2+25, grid_height * cell_size+10) # offset vom random Button
         green_button_offset = (grid_width * cell_size/2+150, grid_height * cell_size+10) # offset vom reset Button
-        label_count_offset = (grid_width * cell_size-200, grid_height * cell_size+10) # offset für count Label unten rechts
-        label_fps_offset = (grid_width * cell_size-200, grid_height * cell_size+30) # offset für FPS Label unten rechts
+        label_count_offset = (grid_width * cell_size-120, grid_height * cell_size+10) # offset für count Label unten rechts
+        label_fps_offset = (grid_width * cell_size-120, grid_height * cell_size+30) # offset für FPS Label unten rechts
         stat_label_1_offset = (70, 50) # offset Stat Label 1 oben links
         stat_label_2_offset = (70, 80) # offset Stat Label 2 oben links
-        zoom_Slider_pos = (300, 1235) # Position des Zoom Sliders
-        velocity_Slider_pos = (80, 1235) # Position des Geschwindigkeitssliders
+        zoom_Slider_pos = (260, 935) # Position des Zoom Sliders
+        velocity_Slider_pos = (80, 935) # Position des Geschwindigkeitssliders
         
-        screen = pygame.display.set_mode((1200,1300)) # Screen wird initialisiert
+        screen = pygame.display.set_mode((900,1000)) # Screen wird initialisiert
         pygame.display.set_caption("Conway's Game of Life") # Titel für den Screen
         
         clock = pygame.time.Clock() # Initialisierung der clock
 
         # Sliders 
-        zoom_Slider = slider.Slider(zoom_Slider_pos[0], zoom_Slider_pos[1], 100, 5, min_value= 5, max_value=20, startValue=12) # Initialisierung des ZoomSliders
-        velocity_Slider = slider.Slider(velocity_Slider_pos[0], velocity_Slider_pos[1], 100, 5, min_value= 1, max_value=100, startValue=60) #Initialisierung des Geschwindigkeitssliders
+        zoom_Slider = slider.Slider(zoom_Slider_pos[0], zoom_Slider_pos[1], 75, 5, min_value= 5, max_value=20, startValue=9) # Initialisierung des ZoomSliders
+        velocity_Slider = slider.Slider(velocity_Slider_pos[0], velocity_Slider_pos[1], 75, 5, min_value= 1, max_value=100, startValue=60) #Initialisierung des Geschwindigkeitssliders
 
         game = GameOfLife(grid_width, grid_height, cell_size) # Initialisierung des Spiels (durch Objekt der GameOfLife Klasse)
         game.initialize() # Spielfeld initialisieren durch Aufruf der initialize Funktion der GameOfLife Klasse
@@ -422,7 +422,7 @@ class GUI:
 
                 cell_size = int(zoom_Slider.value) # Größe der Zelle vom Slider nehmen (Slider gibt Größe der Zelle an)
                 game.grid.cell_size = cell_size # die Zellengröße im Grid verändern
-                grid_width, grid_height = 1200//cell_size, 1200//cell_size # die Anzahl an Spalten und Zeilen neu berechnen
+                grid_width, grid_height = 900//cell_size, 900//cell_size # die Anzahl an Spalten und Zeilen neu berechnen
                 game.grid.width, game.grid.height = grid_width, grid_height # Die Anzahl an Spalten und Zeilen den Attributen
 
                 if event.type == pygame.MOUSEBUTTONDOWN: # Wenn Maus geklickt wird
@@ -544,29 +544,29 @@ class GUI:
                 legende_opened = True
                 pygame.draw.rect(screen, legende_surface_color, legende_surface_rect) # Das Rechteck der expandierten Legende auf den Screen bringen
                 # Legenden Labels auf den Screen bringen, solange die Legende expandiert ist
-                screen.blit(increase_fps_caption, (810, 20))
-                screen.blit(decrease_fps_caption, (810, 50))
-                screen.blit(glider_pattern_caption, (810, 80))
-                screen.blit(blinker_pattern_caption, (810, 110))
-                screen.blit(toad_pattern_caption, (810, 140))
-                screen.blit(rats_pattern_caption, (810, 170))
-                screen.blit(acorn_pattern_caption, (810, 200))
-                screen.blit(gosper_glider_gun_caption, (810, 230))
-                screen.blit(queen_bee_shuttle_caption, (810, 260))
-                screen.blit(pulsar_pattern_caption, (810, 290))
-                screen.blit(diehard_pattern_caption, (810, 320))
-                screen.blit(pentomino_pattern_caption, (810, 350))
-                screen.blit(ants_pattern_caption, (810, 380))
-                screen.blit(reset_field_caption, (810, 410))
-                screen.blit(apply_spell_0_caption, (810, 440))
-                screen.blit(apply_spell_2_caption, (810, 470))
-                screen.blit(apply_spell_1_caption, (810, 500))
-                screen.blit(apply_spell_3_caption, (810, 530))
+                screen.blit(increase_fps_caption, (510, 20))
+                screen.blit(decrease_fps_caption, (510, 50))
+                screen.blit(glider_pattern_caption, (510, 80))
+                screen.blit(blinker_pattern_caption, (510, 110))
+                screen.blit(toad_pattern_caption, (510, 140))
+                screen.blit(rats_pattern_caption, (510, 170))
+                screen.blit(acorn_pattern_caption, (510, 200))
+                screen.blit(gosper_glider_gun_caption, (510, 230))
+                screen.blit(queen_bee_shuttle_caption, (510, 260))
+                screen.blit(pulsar_pattern_caption, (510, 290))
+                screen.blit(diehard_pattern_caption, (510, 320))
+                screen.blit(pentomino_pattern_caption, (510, 350))
+                screen.blit(ants_pattern_caption, (510, 380))
+                screen.blit(reset_field_caption, (510, 410))
+                screen.blit(apply_spell_0_caption, (510, 440))
+                screen.blit(apply_spell_2_caption, (510, 470))
+                screen.blit(apply_spell_1_caption, (510, 500))
+                screen.blit(apply_spell_3_caption, (510, 530))
             else:
                 legende_opened = False
 
 
-            # Buttons anzeigen
+            
             for i, (name, rle) in enumerate(RLE_PATTERNS.items()):
                 label = myfont.render(f"{i+1}: {name}", 1, (255, 255, 255))
                 screen.blit(label, (grid_width * cell_size + 10, 30 * i + 10))
@@ -583,7 +583,7 @@ class GUI:
             screen.blit(velocity_Slider_value, (velocity_Slider_pos[0]+(velocity_Slider.width/2), velocity_Slider_pos[1]+20))
             screen.blit(zoom_Slider_value, (zoom_Slider_pos[0]+ (zoom_Slider.width/2), zoom_Slider_pos[1]+20))
             pygame.draw.rect(screen, legende_button_color, legende_button_rect)
-            screen.blit(legende_button_caption, (1105, 15))
+            screen.blit(legende_button_caption, (805, 15))
 
 
             label_count = myfont.render(f'Count: {count}', 1, (255,255,0)) # Label unten rechts (count)
